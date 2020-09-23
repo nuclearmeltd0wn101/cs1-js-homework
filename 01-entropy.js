@@ -39,7 +39,7 @@ if (filePath)
                 return;
             }
             line = data.toString().split('\n')[0];
-            console.log("Entropy of line \"" + line + "\" is "+entropy(line));
+            console.log(`Entropy of line "${line}" is ${entropy(line)}`);
         }
     )
 else
