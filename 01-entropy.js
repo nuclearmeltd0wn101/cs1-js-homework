@@ -35,7 +35,7 @@ if (filePath)
         {       
             if (err)
             {
-                console.error("File read error occurred: " + err.message)
+                console.error("File read error occurred: " + err.message);
                 return;
             }
             line = data.toString().split('\n')[0];
