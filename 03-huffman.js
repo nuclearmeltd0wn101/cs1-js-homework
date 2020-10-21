@@ -144,12 +144,14 @@ function huffDecode(huffCodesArray)
 }
 
 
-// sample echo testing func
+// sample echo test
 
 const { argv } = require('process');
 let arg = process.argv;
 
-let testStr = arg[2] || `Usage: ${arg[1].split('\\').pop().split('/').pop()} your_phrase_to_test
+let testStr = arg[2];
+if (testStr == undefined)
+    testStr = `Usage: ${arg[1].split('\\').pop().split('/').pop()} your_phrase_to_test
 If huffman encode & decode funcs works correct, program will echo your argument
 If you look into program's structure, you'll be sure, that even these lines was
 encoded, decoded back and only then printed ;)`;
