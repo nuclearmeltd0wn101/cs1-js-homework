@@ -1,0 +1,11 @@
+alc 4
+set 2 10
+
+set 3 1
+mov 4 2
+lip 5
+dec 4
+mul 2 4
+cmp 4 3
+jnz 5
+out 2

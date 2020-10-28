@@ -1,0 +1,32 @@
+set 2 256
+set 3 192
+
+set 4 0
+set 5 1
+
+lip 6
+mov 7 6
+set 5 54
+add 7 5
+set 5 1
+
+cmp 2 4
+jz 7
+cmp 3 4
+jz 7
+
+cmp 2 3
+cmp 1 5
+lip 8
+set 9 11
+add 8 9
+jnz 8
+sub 2 3
+set 9 10
+add 8 9
+jz 8
+sub 3 2
+jmp 6
+
+add 2 3
+out 2

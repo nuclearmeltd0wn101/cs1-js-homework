@@ -49,8 +49,10 @@
                 let placeOfErrorMessage;
                 if (result.errorPosition == -1)
                     placeOfErrorMessage = "Error free";
+                else if (result.errorPosition == -2)
+                    placeOfErrorMessage = "2 errors occurred. Origin message unrecoverable.";
                 else
-                    placeOfErrorMessage = `Error was at bit #${result.errorPosition + 1}`;
+                    placeOfErrorMessage = `Singular error occured and was at bit #${result.errorPosition + 1}`;
                 document.getElementById('placeOfError').textContent = placeOfErrorMessage;
                 
             }
