@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <title>Hamming code</title>
+    </head>
+    <body>
+        <h1>Hamming code</h1>
+        <p>Type the 4 bit message: <input type='text' id='inputMessage'></p>
+        <p> <input type='button' value='Encode' onClick='encodeButtonCallback()'> </p>
+        <p>Encoded message: <input type='text' id='encodedMessage'></p>
+        <p> <input type='button' value='Decode' onClick='decodeButtonCallback()'> </p>
+        <p>Corrected message: <input type='text' id='correctedMessage'></p>
+        <p> <span id='placeOfError'> </span> </p>
+        <script>
+            function hammingEncode(data)
+            {
+                let ctl = new Array();
+                ctl[0] = (data[0] + data[1] + data[2]) % 2;
+                ctl[1] = (data[1] + data[2] + data[3]) % 2;
+                ctl[2] = (data[0] + data[1] + data[3]) % 2;
+                return data.concat(ctl);
+            }
+            function hammingDecode(data)
+            {
+                let result = data.slice(); // copy data object
+                let syndrome = hammingEncode(result.slice(0, 4)).slice(4, 7);
+                for (let i = 0; i < 3; i++)
+                    syndrome[i] = (syndrome[i] + result[4+i]) % 2;
+                
+                syndromeNum = syndrome[0] * 4 + syndrome[1] * 2 + syndrome[2];
+                syndromeNumToErrorPosition = [-1, 6, 5, 3, 4, 0, 2, 1];
+                result.errorPosition = syndromeNumToErrorPosition[syndromeNum];
+                if (result.errorPosition != -1) // -1 means no errors
+                    result[result.errorPosition] = (result[result.errorPosition] + 1) % 2;
+                return result;
+            }
+
+            function encodeButtonCallback()
+            {
+                let messageString = document.getElementById('inputMessage').value;
+                let message = messageString.split('').map(function(x) {return x * 1;});
+                document.getElementById('encodedMessage').value = hammingEncode(message).join('');
+            }
+            function decodeButtonCallback()
+            {
+                let messageString = document.getElementById('encodedMessage').value;
+                let message = messageString.split('').map(function(x) {return x * 1;});
+                let result = hammingDecode(message);
+                document.getElementById('correctedMessage').value = result.join('');
+                let placeOfErrorMessage;
+                if (result.errorPosition == -1)
+                    placeOfErrorMessage = "Error free";
+                else
+                    placeOfErrorMessage = `Error was at bit #${result.errorPosition + 1}`;
+                document.getElementById('placeOfError').textContent = placeOfErrorMessage;
+                
+            }
+        </script>
+    </body>
+</html>
