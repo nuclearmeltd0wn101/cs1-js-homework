@@ -103,12 +103,28 @@ function jasm(progText)
                 memory[0]+=2;
                 break;
             case 19: // div
-                memory[memory[memory[0]+1]] = Math.floor(memory[memory[memory[0]+1]] + memory[memory[memory[0]+2]]);
-                memory[0]+=2;
+                if (memory[memory[memory[0]+2]] == 0)
+                {
+                    console.log("Runtime Error: division by zero")
+                    memory[0]=memory.length;
+                }
+                else
+                {
+                    memory[memory[memory[0]+1]] = Math.floor(memory[memory[memory[0]+1]] + memory[memory[memory[0]+2]]);
+                    memory[0]+=2;
+                }
                 break;
             case 20: // mod
-                memory[memory[memory[0]+1]] %= memory[memory[memory[0]+2]];
-                memory[0]+=2;
+                if (memory[memory[memory[0]+2]] == 0)
+                {
+                    console.log("Runtime Error: division by zero")
+                    memory[0]=memory.length;
+                }
+                else
+                {
+                    memory[memory[memory[0]+1]] %= memory[memory[memory[0]+2]];
+                    memory[0]+=2;
+                }
                 break;
             case 21: // cmp
                 if (memory[memory[memory[0]+1]] == memory[memory[memory[0]+2]])
