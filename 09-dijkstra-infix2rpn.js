@@ -6,26 +6,28 @@ const operatorsPriority = {"^": 2, "*": 1, "/": 1, "+": 0, "-": 0};
 //      приоритетных скобок "(", "), и операндов. операндами считаются
 //      любые элементы массива, кроме строк "(", ")", "+", "-", "*", "/", "^"
 // возвращает соответствующий массив выражения в обратной польской нотации
-function infix2rpn(inputStack)
+function infix2rpn(inputExpression)
 {
-    let resultStack = new Array();
+    let resultExpression = new Array();
     const operators = Object.keys(operatorsPriority);
     let operatorsStack = new Array();
     let token;
     let operator;
     
-    for (let i = 0; i < inputStack.length; i++)
+    for (let i = 0; i < inputExpression.length; i++)
     {
-        token = inputStack[i];
+        token = inputExpression[i];
 
-        if (operators.includes(token))
+        if (operators.includes(token)) // if token is an operator
         {
+            // push operators from ops stack to resultExpression
+            // until ops stack head op has lower priority, than token
             operator = operatorsStack.pop();
 
             while ((operatorsStack.length >= 0)
                 && (operatorsPriority[operator] >= operatorsPriority[token]))
             {
-                resultStack.push(operator);
+                resultExpression.push(operator);
                 operator = operatorsStack.pop();
             }
 
@@ -45,22 +47,25 @@ function infix2rpn(inputStack)
         
         if (token === ")")
         {
+            // push operators from ops stack to resultExpression
+            // until ops stack head is opening bracket
             operator = operatorsStack.pop();
             while ((operatorsStack.length >= 0) && (operator != "(") )
             {
-                resultStack.push(operator);
+                resultExpression.push(operator);
                 operator = operatorsStack.pop();
             }
             continue;
         }
 
-        resultStack.push(token);
+        resultExpression.push(token);
     }
 
+    // push all from ops stack to resultExpression
     while (operatorsStack.length > 0)
-        resultStack.push(operatorsStack.pop());
+        resultExpression.push(operatorsStack.pop());
         
-    return resultStack;
+    return resultExpression;
 }
 
 // тестики для отладки
