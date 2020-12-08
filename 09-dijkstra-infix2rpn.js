@@ -70,13 +70,16 @@ function infix2rpn(inputExpression)
 
 // тестики для отладки
 let tests = new Array(
+    [], // => empty
+    [1, "+", 2], // => 1 2 +
+    [1, "*", 3], // => 1 3 *
     [2, "+", "(", 3, "*", 4, ")"], // => 2 3 4 * +
     ["(",2, "+", 3, ")", "*", 4], // => 2 3 + 4 *
     [3, "+", 4, "*", 2, "/", "(", 1, "-", 5, ")", "^", 2], // => 3 4 2 * 1 5 - 2 ^ / +
     ["(", 1, "+", 2, ")", "*", 4, "+", 3] // => 1 2 + 4 * 3 +
 );
 
-tests.forEach(function(element)
+tests.forEach((element) =>
 {
     console.log(`Infix: ${element.join(' ')}  =>  RPN: ${infix2rpn(element).join(' ')}`);
 });
