@@ -1,13 +1,13 @@
-function SubstringSearchBruteforce(target, query)
+function SubstringSearchBruteforce(haystack, needle)
 {
     let result = new Array();
     let mismatchFound;
-    for (let i = 0; i < target.length - query.length + 1; i++)
+    for (let i = 0; i < haystack.length - needle.length + 1; i++)
     {   
         mismatchFound = false;
-        for (let j = 0; j < query.length; j++)
+        for (let j = 0; j < needle.length; j++)
         {
-            if (target[i+j] != query[j])
+            if (haystack[i+j] != needle[j])
             {
                 mismatchFound = true;
                 break;
@@ -20,24 +20,24 @@ function SubstringSearchBruteforce(target, query)
     return result;   
 }
 
-function SubstringSearchHash(target, query)
+function SubstringSearchHash(haystack, needle)
 {
     // notice: the implemented hash function below is a polynomial
     // rolling hash function, with all operations applied in modular field
 
     // any of thsese two parameters below may vary, but both of them should be prime numbers
-    let polynomialBase = 37;
+    let polynomialBase = 2;
     let modularFieldBase = 999809;
 
     let result = new Array();
     
     // do not compute anything further if it's unneccessary
-    if (target.length < query.length)
+    if (haystack.length < needle.length)
         return result;
     
     // evaluate polynomial leading term multiplier
     let multiplier = 1
-    for (let i = 0; i < query.length - 1; i++)
+    for (let i = 0; i < needle.length - 1; i++)
     {
         multiplier *= polynomialBase;
         multiplier %= modularFieldBase;
@@ -45,34 +45,34 @@ function SubstringSearchHash(target, query)
 
     // evaluate query string hash
     let queryHash = 0;
-    for (let i = 0; i < query.length; i++)
+    for (let i = 0; i < needle.length; i++)
     {
-        queryHash += query.charCodeAt(i) * Math.pow(polynomialBase, i);
+        queryHash += needle.charCodeAt(i) * Math.pow(polynomialBase, i);
         queryHash %= modularFieldBase;
     }
 
     let currentHash = 0;
     let mismatchNotFound;
     let previousElement;
-    for (let i = 0; i < target.length - query.length + 1; i++)
+    for (let i = 0; i < haystack.length - needle.length + 1; i++)
     {
         if (i == 0) // fully evaluate the first substring hash
-            for (let j = 0; j < query.length; j++)
+            for (let j = 0; j < needle.length; j++)
             {
-                currentHash += target.charCodeAt(j) * Math.pow(polynomialBase, j);
+                currentHash += haystack.charCodeAt(j) * Math.pow(polynomialBase, j);
                 currentHash %= modularFieldBase;
             }
         else // but, starting with the second one, use rolling hash recurrent model
             currentHash = ((currentHash + modularFieldBase - previousElement) % modularFieldBase)
-                / polynomialBase + target.charCodeAt(query.length - 1 + i) * multiplier;
+                / polynomialBase + haystack.charCodeAt(needle.length - 1 + i) * multiplier;
 
-        previousElement = target.charCodeAt(i);
+        previousElement = haystack.charCodeAt(i);
 
         if (queryHash == currentHash)
         { // if hashes match, perform actual comparison
             mismatchNotFound = true;
-            for (let j = 0; j < query.length; j++)
-                if (target[i + j] != query[j])
+            for (let j = 0; j < needle.length; j++)
+                if (haystack[i + j] != needle[j])
                     mismatchNotFound = false;
             if (mismatchNotFound)
                 result.push(i);
