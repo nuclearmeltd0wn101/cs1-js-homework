@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <input type='button' value='New random field' onClick='newRandomField()'>
+        <input type='button' value='Start' onClick='gol_start()'>
+        <input type='button' value='Pause' onClick='gol_pause()'>
+        <br /><br />
+        <canvas id="myCanvas" width="800" height="800" style="border:1px solid #c3c3c3;">
+        Your brouser does not support the canvas element.
+        </canvas>
+        
+        <script>
+        let fieldSize = 80;
+        let cellSize = 10;
+        let cellAliveProbability = 0.006; // for random field generator
+        let delay = 300;
+
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#000000";
+
+        let prevField = new Array(fieldSize);
+        let field = new Array(fieldSize);
+        let i = j = 0;
+        
+        let tm;
+        let isRunning = false;
+
+        for (i = 0; i<fieldSize; i++){
+            field[i] = new Array(fieldSize);
+            prevField[i] = new Array(fieldSize);
+        }
+        
+        function newRandomField()
+        {
+            for (i = 0; i<fieldSize; i++)
+                for (j = 0; j<fieldSize; j++)
+                {
+                    field[i][j] = 1 * (Math.random() > (1 - cellAliveProbability));
+
+                    if (field[i][j])
+                    {
+                        ctx.fillStyle = "#FF0000";
+                        ctx.fillRect(i*cellSize, j*cellSize, cellSize, cellSize);
+                    }
+                    else
+                    {
+                        ctx.fillStyle = "#000000";
+                        ctx.fillRect(i*cellSize, j*cellSize, cellSize, cellSize);
+                    }
+                }
+        }
+                
+                
+        //todo neibour coun +-1 (j - 1 + fieldSize) % fieldSize
+        //todo do one step prevField field 
+        //todo copy field to prevField
+
+        function countNeighbours(field, x, y)
+        {
+            let result = -1 * field[x][y];
+            for (let i = -1; i < 2; i++)
+                for (let j = -1; j < 2; j++)
+                    result += field[(x + i + fieldSize) % fieldSize][(y + j + fieldSize) % fieldSize];
+            return result;
+        }
+
+        function getCellNewState(field, x, y)
+        {
+            let neiboursCount = countNeighbours(field, x, y);
+            return 1 * ((neiboursCount <= 3) && (neiboursCount >= 2));
+        }
+
+        function doStep(){
+            for (i = 0; i < fieldSize; i++)
+                prevField[i] = field[i].slice(0)
+
+            for (i = 0; i < fieldSize; i++)
+                for (j = 0; j < fieldSize; j++){
+                    field[i][j] = getCellNewState(prevField, i, j);
+                    if (field[i][j])
+                        ctx.fillStyle = "#FF0000";
+                    else
+                        ctx.fillStyle = "#000000";
+                    ctx.fillRect(i*cellSize, j*cellSize, cellSize, cellSize);
+                }       
+        }
+
+        function gol_start()
+        {
+            if (!isRunning)
+            {
+                isRunning ^= 1;
+                tm = setInterval(doStep, delay);    
+            }
+            
+        }
+
+        function gol_pause()
+        {
+            if (isRunning)
+            {
+                isRunning ^= 1;
+                clearInterval(tm);
+            }
+            
+        }
+
+        newRandomField();
+        </script>
+    </body>
+</html>
