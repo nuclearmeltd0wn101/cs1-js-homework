@@ -2,17 +2,18 @@
 <html>
     <body>
         <input type='button' value='New random field' onClick='newRandomField()'>
-        <input type='button' value='Start' onClick='gol_start()'>
-        <input type='button' value='Pause' onClick='gol_pause()'>
+        <input type='button' value='New empty field' onClick='newVoidField()'>
+        <input type='button' value='Start' onClick='golStart()'>
+        <input type='button' value='Pause' onClick='golPause()'>
         <br /><br />
         <canvas id="myCanvas" width="800" height="800" style="border:1px solid #c3c3c3;">
         Your brouser does not support the canvas element.
         </canvas>
         
         <script>
-        let fieldSize = 80;
-        let cellSize = 10;
-        let cellAliveProbability = 0.006; // for random field generator
+        let fieldSize = 40;
+        let cellSize = 20;
+        let cellAliveProbability = 0.2; // for random field generator
         let delay = 300;
 
         var canvas = document.getElementById("myCanvas");
@@ -26,28 +27,38 @@
         let tm;
         let isRunning = false;
 
-        for (i = 0; i<fieldSize; i++){
+        for (i = 0; i < fieldSize; i++){
             field[i] = new Array(fieldSize);
             prevField[i] = new Array(fieldSize);
         }
-        
+
+        function drawCell(x, y)
+        {
+            if (field[x][y])
+                ctx.fillStyle = "#FF0000";
+            else
+                ctx.fillStyle = "#000000";
+            
+            ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+        }
+
+        function newVoidField()
+        {
+            for (i = 0; i < fieldSize; i++)
+                for (j = 0; j < fieldSize; j++)
+                {
+                    field[i][j] = 0;
+                    drawCell(i, j);
+                }
+        }
+
         function newRandomField()
         {
-            for (i = 0; i<fieldSize; i++)
-                for (j = 0; j<fieldSize; j++)
+            for (i = 0; i < fieldSize; i++)
+                for (j = 0; j < fieldSize; j++)
                 {
                     field[i][j] = 1 * (Math.random() > (1 - cellAliveProbability));
-
-                    if (field[i][j])
-                    {
-                        ctx.fillStyle = "#FF0000";
-                        ctx.fillRect(i*cellSize, j*cellSize, cellSize, cellSize);
-                    }
-                    else
-                    {
-                        ctx.fillStyle = "#000000";
-                        ctx.fillRect(i*cellSize, j*cellSize, cellSize, cellSize);
-                    }
+                    drawCell(i, j);
                 }
         }
                 
@@ -68,42 +79,46 @@
         function getCellNewState(field, x, y)
         {
             let neiboursCount = countNeighbours(field, x, y);
-            return 1 * ((neiboursCount <= 3) && (neiboursCount >= 2));
+            return 1 * (((field[x][y] == 0) && (neiboursCount == 3))
+                || ((field[x][y] == 1) && ((neiboursCount == 3) || (neiboursCount == 2))));
         }
 
         function doStep(){
             for (i = 0; i < fieldSize; i++)
-                prevField[i] = field[i].slice(0)
-
+                prevField[i] = field[i].slice(0);
+            
             for (i = 0; i < fieldSize; i++)
                 for (j = 0; j < fieldSize; j++){
                     field[i][j] = getCellNewState(prevField, i, j);
-                    if (field[i][j])
-                        ctx.fillStyle = "#FF0000";
-                    else
-                        ctx.fillStyle = "#000000";
-                    ctx.fillRect(i*cellSize, j*cellSize, cellSize, cellSize);
-                }       
+                    drawCell(i, j);
+                }
         }
 
-        function gol_start()
+        function updateCell(event){
+            var x = Math.floor((event.clientX - canvas.offsetLeft) / cellSize);
+            var y = Math.floor((event.clientY - canvas.offsetTop) / cellSize);
+            console.log(x,y);
+            field[x][y] ^= 1;
+            drawCell(x, y);
+        }
+        canvas.addEventListener('click', updateCell, false);
+
+        function golStart()
         {
             if (!isRunning)
             {
                 isRunning ^= 1;
                 tm = setInterval(doStep, delay);    
             }
-            
         }
 
-        function gol_pause()
+        function golPause()
         {
             if (isRunning)
             {
                 isRunning ^= 1;
                 clearInterval(tm);
             }
-            
         }
 
         newRandomField();
