@@ -80,7 +80,7 @@
 
         function doStep(){
             for (i = 0; i < fieldSize; i++)
-                prevField[i] = field[i].slice(0);
+                prevField[i] = field[i].slice(); // зачем нам array.copy, если это - вырожденный slice (c) авторы js
             
             for (i = 0; i < fieldSize; i++)
                 for (j = 0; j < fieldSize; j++){
