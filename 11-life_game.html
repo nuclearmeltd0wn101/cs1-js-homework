@@ -3,8 +3,8 @@
     <body>
         <input type='button' value='New random field' onClick='newRandomField()'>
         <input type='button' value='New empty field' onClick='newVoidField()'>
-        <input type='button' value='Start' onClick='golStart()'>
-        <input type='button' value='Pause' onClick='golPause()'>
+        <input type='button' value='Start' onClick='gameStart()'>
+        <input type='button' value='Pause' onClick='gamePause()'>
         <br /><br />
         <canvas id="myCanvas" width="800" height="800" style="border:1px solid #c3c3c3;">
         Your brouser does not support the canvas element.
@@ -61,11 +61,6 @@
                     drawCell(i, j);
                 }
         }
-                
-                
-        //todo neibour coun +-1 (j - 1 + fieldSize) % fieldSize
-        //todo do one step prevField field 
-        //todo copy field to prevField
 
         function countNeighbours(field, x, y)
         {
@@ -103,7 +98,7 @@
         }
         canvas.addEventListener('click', updateCell, false);
 
-        function golStart()
+        function gameStart()
         {
             if (!isRunning)
             {
@@ -112,7 +107,7 @@
             }
         }
 
-        function golPause()
+        function gamePause()
         {
             if (isRunning)
             {
