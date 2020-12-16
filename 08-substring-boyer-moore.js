@@ -1,34 +1,40 @@
-function SubstringSearchBM(haystack, needle)
+function BMMakeShiftsDict(needle)
 {
-    let N = haystack.length;
-    let M = needle.length;
-    let shift = new Array();
-    for (let i = 0; i < 65536; i++)
-        shift[i] = M;
-
-    for (let i = 0; i < M; i++)
-        shift[haystack.charCodeAt(i)] = M - i;
-
-    let result = new Array();
-    let i = N - 1;
-    let j;
-    while (i <= N)
-    {
-        j = M;
-        k = i;
-        while ((j > 0) && (needle[j] == haystack[k]))
-        {
-            j--;
-            k--;
-        }
-        if (j == 0)
-            result.push(k);
-        if (i < N)
-            i += shift[haystack[i]];
-        else
-            i++;
-    }
+    let result = new Object(); // this object will serve as dictionary (associative array)
+    let needleLength = needle.length;
+    for (let i = 0; i < needleLength; i++)
+        result[needle.charCodeAt(i)] = needleLength - i;    
     return result;
 }
-// todo: find mistakes
-console.log(SubstringSearchBM('akekketykek', 'akek'));
+
+function SubstringSearchBM(haystack, needle)
+{
+    let needleLength = needle.length;
+    
+    let shiftsDict = BMMakeShiftsDict(needle);
+
+    let compareStartPos, comparePosHaystack, comparePosNeedle;
+    compareStartPos = comparePosHaystack = comparePosNeedle = needleLength;
+    
+    let result = new Array(); // occurrences first indexes
+    while ((compareStartPos <= haystack.length) && (comparePosNeedle >= 0))
+    {
+        if (haystack[comparePosHaystack - 1] == needle[comparePosNeedle - 1])
+        { // if letters match, moving on one step to the beginning
+            comparePosHaystack -= 1;
+            comparePosNeedle -= 1;
+        }
+        else
+        { // otherwise, shifting to defined distance and starting again
+            compareStartPos += shiftsDict[haystack.charCodeAt(compareStartPos)] || 1;
+            comparePosHaystack = compareStartPos;
+            comparePosNeedle = needleLength;
+        }
+        if (comparePosNeedle == 0) // reached occurrence
+            result.push(comparePosHaystack);
+    }
+
+    return result;
+}
+
+console.log(SubstringSearchBM('akekketykek', 'kek'));
