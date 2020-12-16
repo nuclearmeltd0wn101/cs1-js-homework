@@ -64,11 +64,11 @@
 
         function countNeighbours(field, x, y)
         {
-            let result = -1 * field[x][y];
-            for (let i = -1; i < 2; i++)
-                for (let j = -1; j < 2; j++)
-                    result += field[(x + i + fieldSize) % fieldSize][(y + j + fieldSize) % fieldSize];
-            return result;
+            let result = 0;
+            for (let i = 0; i < 3; i++)
+                for (let j = 0; j < 3; j++)
+                    result += field[(x + i - 1 + fieldSize) % fieldSize][(y + j - 1 + fieldSize) % fieldSize];
+            return result - field[x][y];
         }
 
         function getCellNewState(field, x, y)
@@ -96,7 +96,7 @@
             field[x][y] ^= 1;
             drawCell(x, y);
         }
-        canvas.addEventListener('click', updateCell, false);
+        canvas.addEventListener('click', updateCell);
 
         function gameStart()
         {
