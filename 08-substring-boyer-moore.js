@@ -89,10 +89,14 @@ function SubstringSearchBM(haystack, needle)
         }
  
         // if bad char not found in table, assuming needle length as shift
-        if (shifts1.hasOwnProperty(haystack.charCodeAt(compareStartPos)))
-            shift1 = shifts1[haystack.charCodeAt(compareStartPos)]; 
-        else
-            shift1 = needle.length;
+        shift1 = ((object, property, fallbackValue) =>
+            {
+                if (object.hasOwnProperty(property))
+                    return object[property];
+                else
+                    return fallbackValue;
+            }
+        )(shifts1, haystack.charCodeAt(compareStartPos), needle.length);;
  
         compareStartPos += Math.max(shift1,
             shifts2[needle.length - 1 - comparePosNeedle]);
