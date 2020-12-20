@@ -23,7 +23,8 @@ function BMMakeGoodSuffixShiftsTable(needle)
         result.push(lastPrefix + i);
     }
  
-    for (let i = 0; i < needleLength; i++) {
+    for (let i = 0; i < needleLength; i++)
+    {
         let suffixLength = BMGetSuffixLength(needle, i);
         result[suffixLength] = suffixLength + needleLength - 1 - i;
     }
@@ -39,7 +40,8 @@ function BMIsPrefix(string, startPos)
     return true;
 }
 
-function BMGetSuffixLength(string, startPos) {
+function BMGetSuffixLength(string, startPos)
+{
     let stringLastCharPos = string.length - 1;
     let result = 0;
     
@@ -78,15 +80,18 @@ function SubstringSearchBM(haystack, needle)
             comparePosHaystack--;
             comparePosNeedle--;
         }
+
         if (comparePosNeedle == -1)
-        { // if we had moved through needle beginning, we had reached occurrence
+        { // if it had moved through needle beginning, this is occurrence
             comparePosHaystack++;
             comparePosNeedle++;
             result.push(comparePosHaystack);
         }
  
-        shift1 = shifts1[haystack.charCodeAt(compareStartPos)];
-        if (shift1 === undefined) // if bad char not found, assuming whole needle length as shift
+        // if bad char not found in table, assuming needle length as shift
+        if (shifts1.hasOwnProperty(haystack.charCodeAt(compareStartPos)))
+            shift1 = shifts1[haystack.charCodeAt(compareStartPos)]; 
+        else
             shift1 = needle.length;
  
         compareStartPos += Math.max(shift1,
