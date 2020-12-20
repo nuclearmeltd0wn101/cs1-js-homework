@@ -67,7 +67,7 @@ function SubstringSearchBM(haystack, needle)
     let shifts1 = BMMakeBadSymbolShiftsDict(needle);
     let shifts2 = BMMakeGoodSuffixShiftsTable(needle);
 
-    let comparePosHaystack, comparePosNeedle, shift1;
+    let comparePosHaystack, comparePosNeedle, shift1, shift2;
     let compareStartPos = needleLength - 1;
     while (compareStartPos < haystackLength)
     {
@@ -88,18 +88,14 @@ function SubstringSearchBM(haystack, needle)
             result.push(comparePosHaystack);
         }
  
+        shift2 = shifts2[needle.length - 1 - comparePosNeedle];
         // if bad char not found in table, assuming needle length as shift
-        shift1 = ((object, property, fallbackValue) =>
-            {
-                if (object.hasOwnProperty(property))
-                    return object[property];
-                else
-                    return fallbackValue;
-            }
-        )(shifts1, haystack.charCodeAt(compareStartPos), needle.length);;
+        if (shifts1.hasOwnProperty(haystack.charCodeAt(compareStartPos)))
+            shift1 = shifts1[haystack.charCodeAt(compareStartPos)]; 
+        else
+            shift1 = needle.length;
  
-        compareStartPos += Math.max(shift1,
-            shifts2[needle.length - 1 - comparePosNeedle]);
+        compareStartPos += Math.max(shift1, shift2);
     }
     return result;
 }
