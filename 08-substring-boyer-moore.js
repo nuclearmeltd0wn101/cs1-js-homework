@@ -68,10 +68,9 @@ function SubstringSearchBM(haystack, needle)
     let shifts2 = BMMakeGoodSuffixShiftsTable(needle);
 
     let comparePosHaystack, comparePosNeedle, shift1, shift2;
-    let compareStartPos = needleLength - 1;
-    while (compareStartPos < haystackLength)
+    comparePosHaystack = needleLength - 1;
+    while (comparePosHaystack < haystackLength)
     {
-        comparePosHaystack = compareStartPos;
         comparePosNeedle = needle.length - 1;
  
         while ((haystack[comparePosHaystack] === needle[comparePosNeedle])
@@ -83,19 +82,19 @@ function SubstringSearchBM(haystack, needle)
 
         if (comparePosNeedle == -1)
         { // if it had moved through needle beginning, this is occurrence
-            comparePosHaystack++;
+            comparePosHaystack++; // moving one step back
             comparePosNeedle++;
             result.push(comparePosHaystack);
         }
  
         shift2 = shifts2[needle.length - 1 - comparePosNeedle];
         // if bad char not found in table, assuming needle length as shift
-        if (shifts1.hasOwnProperty(haystack.charCodeAt(compareStartPos)))
-            shift1 = shifts1[haystack.charCodeAt(compareStartPos)]; 
+        if (shifts1.hasOwnProperty(haystack.charCodeAt(comparePosHaystack)))
+            shift1 = shifts1[haystack.charCodeAt(comparePosHaystack)]; 
         else
             shift1 = needle.length;
  
-        compareStartPos += Math.max(shift1, shift2);
+        comparePosHaystack += Math.max(shift1, shift2);
     }
     return result;
 }
@@ -103,3 +102,5 @@ function SubstringSearchBM(haystack, needle)
 console.log(SubstringSearchBM('akekketykek', 'akek'));
 console.log(SubstringSearchBM('akekketykek', 'kek'));
 console.log(SubstringSearchBM('цыган на цыпочках цыпленку цыкнул: цыц!', 'цы'));
+console.log(SubstringSearchBM('WHICH_FINALLY_HALTS.__AT_THAT_PIONT', 'AT_THAT'));
+console.log(SubstringSearchBM('bcdbcabcdbcabcabcabcabcabcbc', 'bcdbcabcabc'));
