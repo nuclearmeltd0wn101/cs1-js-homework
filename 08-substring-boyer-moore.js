@@ -17,7 +17,7 @@ function BMMakeGoodSuffixShiftsTable(needle)
  
     for (let i = 0; i < needleLength; i++)
     {
-        if (BMIsPrefix(needle, needleLength - i))
+        if (BMCheckIsPrefix(needle, needleLength - i))
             lastPrefix = needleLength - i;
         
         result.push(lastPrefix + i);
@@ -25,13 +25,13 @@ function BMMakeGoodSuffixShiftsTable(needle)
  
     for (let i = 0; i < needleLength; i++)
     {
-        let suffixLength = BMGetSuffixLength(needle, i);
+        let suffixLength = BMCalculateSuffixLength(needle, i);
         result[suffixLength] = suffixLength + needleLength - 1 - i;
     }
     return result;
 }
 
-function BMIsPrefix(string, startPos)
+function BMCheckIsPrefix(string, startPos)
 {
     for (let i = startPos; i < string.length; i++)
         if (string.charCodeAt(i) != string.charCodeAt(startPos - i))
@@ -40,7 +40,7 @@ function BMIsPrefix(string, startPos)
     return true;
 }
 
-function BMGetSuffixLength(string, startPos)
+function BMCalculateSuffixLength(string, startPos)
 {
     let stringLastCharPos = string.length - 1;
     let result = 0;
