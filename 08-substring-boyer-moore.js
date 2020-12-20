@@ -98,4 +98,3 @@ function SubstringSearchBM(haystack, needle)
 console.log(SubstringSearchBM('akekketykek', 'akek'));
 console.log(SubstringSearchBM('akekketykek', 'kek'));
 console.log(SubstringSearchBM('цыган на цыпочках цыпленку цыкнул: цыц!', 'цы'));
-//console.log(SubstringSearchBM('akekketykek', 'kek'));
