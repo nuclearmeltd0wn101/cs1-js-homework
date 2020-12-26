@@ -1,38 +1,38 @@
-function BMMakeBadSymbolShiftsDict(needle)
+function BMMakeBadSymbolDict(needle)
 {
-    let result = new Object(); // this object will serve as dictionary (associative array)
+    let result = new Object(); // this object will serve as dictionary (associative array),
     let needleLength = needle.length;
 
     for (let i = 0; i < needleLength; i++)
-        result[needle.charCodeAt(i)] = needleLength - 1 - i;
-     
+        result[needle.charCodeAt(i)] = i + 1;
+    
     return result;
 }
 
 function BMMakeGoodSuffixShiftsTable(needle)
-{
+{ // makes good suffix shifts table (f: mismatchNeedlePosition -> shift) using prefixes
     let result = new Array();
     let needleLength = needle.length;
-    let lastPrefix = needleLength;
+    let lastFoundPrefixPosition = needleLength;
  
     for (let i = 0; i < needleLength; i++)
     {
+        // if substring needle[0..needleLength - i] is needle prefix, save its position
         if (BMCheckIsPrefix(needle, needleLength - i))
-            lastPrefix = needleLength - i;
+            lastFoundPrefixPosition = needleLength - i;
         
-        result.push(lastPrefix + i);
+        // and fill array with last prefix position plus step
+        result.push(lastFoundPrefixPosition + i);
     }
  
-    for (let i = 0; i < needleLength; i++)
-    {
-        let suffixLength = BMCalculateSuffixLength(needle, i);
-        result[suffixLength] = suffixLength + needleLength - 1 - i;
-    }
+    for (let i = 0; i < needleLength; i++) // evaluating shifts by good suffix shifts definition
+        ((suffixLength) => result[suffixLength] = suffixLength + needleLength - 1 - i)(BMEvalSuffixLength(needle, i));
+    
     return result;
 }
 
 function BMCheckIsPrefix(string, startPos)
-{
+{ // naive prefix check (is string[startPos .. stringLength-1] === string[0 .. stringLength - startPos])
     for (let i = startPos; i < string.length; i++)
         if (string.charCodeAt(i) != string.charCodeAt(startPos - i))
             return false;
@@ -40,8 +40,8 @@ function BMCheckIsPrefix(string, startPos)
     return true;
 }
 
-function BMCalculateSuffixLength(string, startPos)
-{
+function BMEvalSuffixLength(string, startPos)
+{ // naive suffix length evaluation
     let stringLastCharPos = string.length - 1;
     let result = 0;
     
@@ -64,8 +64,8 @@ function SubstringSearchBM(haystack, needle)
     if (needleLength > haystackLength)
         return result;
 
-    let shifts1 = BMMakeBadSymbolShiftsDict(needle);
-    let shifts2 = BMMakeGoodSuffixShiftsTable(needle);
+    let badSymbolDict = BMMakeBadSymbolDict(needle);
+    let goodSuffixTable = BMMakeGoodSuffixShiftsTable(needle);
 
     let comparePosHaystack, comparePosNeedle, shift1, shift2;
     comparePosHaystack = needleLength - 1;
@@ -86,19 +86,21 @@ function SubstringSearchBM(haystack, needle)
             comparePosNeedle++;
             result.push(comparePosHaystack);
         }
- 
-        shift2 = shifts2[needle.length - 1 - comparePosNeedle];
-        // if bad char not found in table, assuming needle length as shift
-        if (shifts1.hasOwnProperty(haystack.charCodeAt(comparePosHaystack)))
-            shift1 = shifts1[haystack.charCodeAt(comparePosHaystack)]; 
-        else
-            shift1 = needle.length;
+        
+        shift1 = needle.length;
+        if (badSymbolDict.hasOwnProperty(haystack.charCodeAt(comparePosHaystack)))
+            shift1 -= badSymbolDict[haystack.charCodeAt(comparePosHaystack)] + comparePosNeedle; 
+        // if bad char not found in table, assuming needle length as table value
+        shift1 = Math.max(1, shift1);
+        
+        shift2 = goodSuffixTable[needle.length - (comparePosNeedle + 1)];
  
         comparePosHaystack += Math.max(shift1, shift2);
     }
     return result;
 }
 
+console.log(SubstringSearchBM('kek', 'kek'));
 console.log(SubstringSearchBM('akekketykek', 'akek'));
 console.log(SubstringSearchBM('akekketykek', 'kek'));
 console.log(SubstringSearchBM('цыган на цыпочках цыпленку цыкнул: цыц!', 'цы'));
