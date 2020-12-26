@@ -100,6 +100,7 @@ function SubstringSearchBM(haystack, needle)
     return result;
 }
 
+// tests
 console.log(SubstringSearchBM('kek', 'kek'));
 console.log(SubstringSearchBM('akekketykek', 'akek'));
 console.log(SubstringSearchBM('akekketykek', 'kek'));
